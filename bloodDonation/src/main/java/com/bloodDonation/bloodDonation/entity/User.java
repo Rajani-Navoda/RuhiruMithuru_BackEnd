@@ -1,5 +1,6 @@
 package com.bloodDonation.bloodDonation.entity;
 
+import com.bloodDonation.bloodDonation.util.UserType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,6 +16,9 @@ public class User {
     private String userFirstName;
     private String userLastName;
     private String userPassword;
+
+    @Enumerated(EnumType.STRING)
+    private UserType userType;
 
     //many users have many different roles
     @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)

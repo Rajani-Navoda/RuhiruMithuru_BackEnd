@@ -42,26 +42,58 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 
 
+//    @Override
+//    protected void configure(HttpSecurity httpSecurity) throws Exception {
+//        httpSecurity.cors();
+//        httpSecurity.csrf().disable()
+//                .authorizeRequests().antMatchers("/authenticate", "/registerNewUser", "/createNewRole",
+//                        "/v2/api-docs",
+//                        "/swagger-ui.html",
+//                        "/swagger.json").permitAll()
+//                .antMatchers("/forAdmin/**").hasRole("ADMIN")
+//                .antMatchers("/forUser/**").hasRole("USER")
+//                .antMatchers("/forOrganizer/**").hasRole("ORGANIZER")
+//                .antMatchers("/forBloodBank/**").hasRole("BLOOD_BANK")
+//                .antMatchers(HttpHeaders.ALLOW).permitAll()
+//                .anyRequest().authenticated()
+//                .and()
+//                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+//                .and()
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//        ;
+//
+//        httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+//    }
+//
+//
+//    @Autowired
+//    public void configureGlobal(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+//        authenticationManagerBuilder.userDetailsService(jwtService).passwordEncoder(passwordEncoder());
+//    }
+
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors();
         httpSecurity.csrf().disable()
-                .authorizeRequests().antMatchers("/authenticate", "/forUser", "/forAdmin", "/registerNewUser").permitAll()
+                .authorizeRequests()
+                .antMatchers("/authenticate", "/registerNewUser", "/createNewRole",
+                        "/v3/api-docs/**",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html",
+                        "/swagger-resources/**",
+                        "/webjars/**").permitAll()
+                .antMatchers("/forAdmin/**").hasRole("ADMIN")
+                .antMatchers("/forUser/**").hasRole("USER")
+                .antMatchers("/forOrganizer/**").hasRole("ORGANIZER")
+                .antMatchers("/forBloodBank/**").hasRole("BLOOD_BANK")
                 .antMatchers(HttpHeaders.ALLOW).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        ;
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
-
-
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-        authenticationManagerBuilder.userDetailsService(jwtService).passwordEncoder(passwordEncoder());
-    }
 }

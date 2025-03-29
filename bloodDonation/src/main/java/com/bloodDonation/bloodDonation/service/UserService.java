@@ -4,6 +4,7 @@ import com.bloodDonation.bloodDonation.dao.RoleDao;
 import com.bloodDonation.bloodDonation.dao.UserDao;
 import com.bloodDonation.bloodDonation.entity.Role;
 import com.bloodDonation.bloodDonation.entity.User;
+import com.bloodDonation.bloodDonation.util.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,47 +26,58 @@ public class UserService {
 
     public User registerNewUser(User user){
 
+//
         Role role = roleDao.findById("User").get();
+//        Set<Role> roles = new HashSet<>();
+//        roles.add(role);
+//        user.setRole(roles);
+//        user.setUserPassword(getEncodedPassword(user.getUserPassword()));
+//       return userDao.save(user);
+
+        Role userRole = roleDao.findById(user.getUserType().toString()).get();
         Set<Role> roles = new HashSet<>();
-        roles.add(role);
+        roles.add(userRole);
         user.setRole(roles);
         user.setUserPassword(getEncodedPassword(user.getUserPassword()));
-       return userDao.save(user);
-
+        return userDao.save(user);
     }
 
     public void initRolesAndUser() {
-
         Role adminRole = new Role();
-        adminRole.setRoleName("Admin");
-        adminRole.setRoleDescription("Admin role for the application");
+        adminRole.setRoleName("ADMIN");
+        adminRole.setRoleDescription("Administrator role");
         roleDao.save(adminRole);
 
+        // Initialize Blood Bank Role
+        Role bloodBankRole = new Role();
+        bloodBankRole.setRoleName("BLOOD_BANK");
+        bloodBankRole.setRoleDescription("Blood Bank role");
+        roleDao.save(bloodBankRole);
+
+        // Initialize Organizer Role
+        Role organizerRole = new Role();
+        organizerRole.setRoleName("ORGANIZER");
+        organizerRole.setRoleDescription("Event Organizer role");
+        roleDao.save(organizerRole);
+
+        // Initialize User Role
         Role userRole = new Role();
-        userRole.setRoleName("User");
-        userRole.setRoleDescription("User role for the application");
+        userRole.setRoleName("USER");
+        userRole.setRoleDescription("Default user role");
         roleDao.save(userRole);
 
+        // Create default admin user
         User adminUser = new User();
         adminUser.setUserFirstName("Admin");
         adminUser.setUserLastName("Admin");
         adminUser.setUserName("admin123");
+
         adminUser.setUserPassword(getEncodedPassword("admin@123"));
+        adminUser.setUserType(UserType.ADMIN);
         Set<Role> adminRoles = new HashSet<>();
         adminRoles.add(adminRole);
         adminUser.setRole(adminRoles);
         userDao.save(adminUser);
-
-//        User user = new User();
-//        user.setUserFirstName("Normal");
-//        user.setUserLastName("User");
-//        user.setUserName("user123");
-//        user.setUserPassword(getEncodedPassword("user@123"));
-//        Set<Role> userRoles = new HashSet<>();
-//        userRoles.add(userRole);
-//        user.setRole(userRoles);
-//        userDao.save(user);
-
     }
 
     public String getEncodedPassword(String password){

@@ -4,13 +4,13 @@ import com.bloodDonation.bloodDonation.entity.JwtRequest;
 import com.bloodDonation.bloodDonation.entity.JwtResponse;
 import com.bloodDonation.bloodDonation.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:4200",
+        allowedHeaders = {"Authorization", "Content-Type"},
+        exposedHeaders = "Authorization",
+        methods = {RequestMethod.POST})
 public class JwtController {
     @Autowired
     private JwtService jwtService;

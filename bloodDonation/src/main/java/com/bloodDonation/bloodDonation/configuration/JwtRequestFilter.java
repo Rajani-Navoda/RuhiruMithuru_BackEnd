@@ -35,32 +35,31 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String jwtToken = null;
 
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            jwtToken = requestTokenHeader.substring(7).trim(); // Add trim() to remove any whitespace
+            jwtToken = requestTokenHeader.substring(7);
             try {
-                if (jwtToken != null && jwtToken.split("\\.").length == 3) {
-                    username = jwtUtil.getUserNameFromToken(jwtToken);
-                }
+                username = jwtUtil.getUserNameFromToken(jwtToken);
             } catch (IllegalArgumentException e) {
                 System.out.println("Unable to get JWT Token");
             } catch (ExpiredJwtException e) {
                 System.out.println("JWT Token has expired");
-            } catch (io.jsonwebtoken.MalformedJwtException e) {
-                System.out.println("Invalid JWT token format");
             }
         } else {
-            System.out.println("JWT token does not start with Bearer");
+            System.out.println("JWT Token does not begin with Bearer String");
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = jwtService.loadUserByUsername(username);
 
             if (jwtUtil.validateToken(jwtToken, userDetails)) {
-                UsernamePasswordAuthenticationToken authentication =
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(
+
+                usernamePasswordAuthenticationToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                SecurityContextHolder.getContext()
+                        .setAuthentication(usernamePasswordAuthenticationToken);
             }
         }
         filterChain.doFilter(request, response);
